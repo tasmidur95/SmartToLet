@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin
+Disallow: /my/
+Disallow: /profile
+Disallow: /wishlist
+Allow: /

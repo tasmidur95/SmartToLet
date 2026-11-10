@@ -1,0 +1,28 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # SECURITY: the project root is the web root in this legacy layout, so block everything that is
+    # not meant to be public (env files, source, vendor, storage, dumps, docs, git).
+    RewriteRule ^(\.|vendor/|storage/|app/|bootstrap/|config/|database/|routes/|resources/|tests/|frontend/|node_modules/) - [F,L,NC]
+    RewriteCond %{REQUEST_URI} !^/(.*/)?robots\.txt$ [NC]
+    RewriteRule \.(env|sql|md|lock|json|log|bak|dist|example|xml|yml|yaml|txt)$ - [F,L,NC]
+    RewriteRule ^(artisan|server\.php|webpack\.mix\.js|package\.json|composer\.(json|lock))$ - [F,L,NC]
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Handle Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>

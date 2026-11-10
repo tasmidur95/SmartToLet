@@ -1,0 +1,84 @@
+# One command:
+#     docker compose up --build
+# Start-up order: db -> backend -> frontend
+#   http://localhost:8080           website
+#   http://localhost:8080/backend   Laravel API  (/backend/api/v1/...)
+# Everything else (database, app key, admin password) is generated automatically.
+
+name: houserental
+
+services:
+  # 1) database -------------------------------------------------------------
+  db:
+    image: mysql:8.0
+    command: ["--default-authentication-plugin=mysql_native_password", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    environment:
+      MYSQL_DATABASE: houserental
+      MYSQL_USER: houserental
+      MYSQL_PASSWORD: ${DB_PASSWORD:-houserental}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-houserental-root}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    restart: unless-stopped
+
+  # 2) backend (Laravel API) ----------------------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    ports:
+      - "8000:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      LOG_CHANNEL: stderr
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: houserental
+      DB_USERNAME: houserental
+      DB_PASSWORD: ${DB_PASSWORD:-houserental}
+      CACHE_DRIVER: file
+      SESSION_DRIVER: file
+      QUEUE_CONNECTION: sync
+      MAIL_DRIVER: log                    # mails are written to the log; set real SMTP to send them
+      TRUSTED_PROXIES: "*"                # requests arrive through nginx
+      URL_PREFIX: ""                      # the API is accessed directly on port 8000
+      SEED_DEMO: ${SEED_DEMO:-true}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-123456}  # empty = generated once and printed in the logs
+      STORE_ID: ${STORE_ID:-}
+      STORE_PASSWORD: ${STORE_PASSWORD:-}
+      API_DOMAIN_URL: ${API_DOMAIN_URL:-https://sandbox.sslcommerz.com}
+      IS_LOCALHOST: ${IS_LOCALHOST:-false}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+    volumes:
+      - backend_storage:/var/www/html/storage
+      - media:/var/www/html/public/media
+    restart: unless-stopped
+
+  # 3) frontend (React + nginx) -----------------------------------------------------
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #   depends_on:
+  #     backend:
+  #       condition: service_healthy
+  #   ports:
+  #     - "8080:80"
+  #   restart: unless-stopped
+
+volumes:
+  db_data:
+  backend_storage:
+  media:
