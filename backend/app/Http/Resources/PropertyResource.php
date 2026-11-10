@@ -58,8 +58,24 @@ class PropertyResource extends JsonResource
                 'phone' => $this->phone,
             ]),
             'user_id'         => $this->when($this->withContact($request), $this->user_id),
+            'payments'        => $this->when($this->withContact($request), function () {
+                return $this->paymentState();
+            }),
             'created_at'      => optional($this->created_at)->toIso8601String(),
         ];
+    }
+
+    /** Listing fee: 'paid' (verified), 'verifying' (reference submitted) or null. */
+    protected function paymentState(): array
+    {
+        $rows = \App\Order::where('property_id', $this->id)->where('purpose', 'listing')
+            ->get(['purpose', 'status', 'reject_reason']);
+        $state = [];
+        $state['listing'] = $rows->whereIn('status', \App\Order::PAID)->count() ? 'paid'
+            : ($rows->where('status', \App\Order::VERIFYING)->count() ? 'verifying' : null);
+        $state['rejected_reason'] = optional($rows->where('status', \App\Order::FAILED)->last())->reject_reason;
+
+        return $state;
     }
 
     protected function num($value)

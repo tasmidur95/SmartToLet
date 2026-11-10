@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Resources\PropertyResource;
 use App\Model\Admin\Subcity;
 use App\Model\Property;
+use App\Order;
 use App\Support\ImageUploader;
 use App\Traits\PropertyInput;
 use Illuminate\Http\Request;
@@ -81,6 +82,9 @@ class PropertyController extends ApiController
 
         $property = Property::findOrFail($id);
         $status   = self::TRANSITIONS[$action];
+        if ($status === Property::PUBLISHED && !Order::paidFor($property->id, 'listing')) {
+            throw ApiException::conflict('The listing fee has not been paid and verified yet, so this property cannot be published.');
+        }
         $update   = ['status' => $status];
         if ($status === Property::DELIVERED) {
             $update += ['date' => date('d-m-y'), 'month' => date('F'), 'year' => date('Y')];

@@ -61,6 +61,32 @@ export function Coupons() {
   );
 }
 
+export function PaymentMethods() {
+  const TYPES = [['card', 'Card'], ['bank', 'Bank account'], ['mfs', 'Mobile banking (bKash, Nagad, Rocket…)']];
+  return (
+    <CrudPage
+      title="Payment methods" subtitle="Accounts users send money to. They then submit the transaction reference, which you verify under Payments." noun="Payment method" endpoint="/admin/payment-methods"
+      columns={[
+        { label: 'Type', render: (r) => (TYPES.find((t) => t[0] === r.type) || [, r.type])[1].split(' (')[0] },
+        { label: 'Name', key: 'name' },
+        { label: 'Account', render: (r) => <>{r.account_name || '—'}<small className="sub-line"><code>{r.account_number}</code></small></> },
+        { label: 'Status', render: (r) => <span className={`badge badge-${r.is_active ? 'green' : 'gray'}`}>{r.is_active ? 'Active' : 'Hidden'}</span> },
+      ]}
+      fields={[
+        { name: 'type', label: 'Type', type: 'select', options: TYPES, required: true },
+        { name: 'name', label: 'Name', required: true, hint: 'e.g. bKash, Nagad, City Bank, Visa' },
+        { name: 'account_name', label: 'Account holder name' },
+        { name: 'account_number', label: 'Card / account / wallet number', required: true },
+        { name: 'instructions', label: 'Instructions for the payer', type: 'textarea', rows: 3, hint: 'e.g. Use Send Money, then copy the TrxID' },
+        { name: 'is_active', label: 'Show to users', type: 'checkbox' },
+      ]}
+      empty={{ type: 'mfs', name: '', account_name: '', account_number: '', instructions: '', is_active: true }}
+      toForm={(r) => ({ type: r.type, name: r.name, account_name: r.account_name || '', account_number: r.account_number, instructions: r.instructions || '', is_active: r.is_active })}
+      toBody={(f) => ({ ...f, is_active: f.is_active ? 1 : 0 })}
+    />
+  );
+}
+
 function BlogCategories() {
   return (
     <CrudPage

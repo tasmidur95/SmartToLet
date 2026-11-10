@@ -48,7 +48,7 @@
 
          <tr>
             <th>Subcity/Thana : </th>
-            <th>{{ $data['subcity'] }}</th>
+            <th>{{ $data['subcity'] ?? '' }}</th>
         </tr>
       <tr>
           <th>Property Code :</th>
@@ -68,7 +68,7 @@
         </tr>
         <tr>
             <th>Parking : </th>
-            <th>{{ $data['parking'] }}</th>
+            <th>{{ $data['parking'] ?? '' }}</th>
         </tr>
         <tr>
             <th>Type :</th>
@@ -88,7 +88,7 @@
       </tr>
       <tr>
           <th>Floor Level :</th>
-          <th>{{ $data['floor'] }}</th>
+          <th>{{ $data['floor'] ?? '' }}</th>
       </tr>
       <tr>
           <th>Price :</th>
@@ -96,7 +96,7 @@
       </tr>
       <tr>
         <th>Video :</th>
-        <th>{{ $data['video'] }}</th>
+        <th>{{ $data['video'] ?? '' }}</th>
     </tr>
     <tr>
         <th>Month :</th>

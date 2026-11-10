@@ -59,11 +59,7 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
     Route::post('properties/{id}/visits', 'VisitController@store')->middleware('throttle:10,1,forms');
     Route::get('reviews', 'ContentController@reviews');
 
-    // SSLCommerz callbacks (the gateway sends the browser / its servers here)
-    Route::post('payments/success', 'PaymentController@callbackSuccess');
-    Route::post('payments/fail', 'PaymentController@callbackFail');
-    Route::post('payments/cancel', 'PaymentController@callbackCancel');
-    Route::post('payments/ipn', 'PaymentController@callbackIpn');
+    Route::get('payment-methods', 'PaymentController@methods');
 
     Route::get('blog/posts', 'ContentController@posts');
     Route::get('blog/posts/{id}', 'ContentController@post');
@@ -86,7 +82,8 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
         Route::get('my/visits', 'VisitController@mine');
         Route::post('my/visits/{id}/cancel', 'VisitController@cancel');
 
-        Route::post('payments/checkout', 'PaymentController@checkout');
+        Route::get('payments/quote', 'PaymentController@quote');
+        Route::post('payments', 'PaymentController@store');
         Route::get('my/orders', 'MyOrderController@index');
         Route::get('my/orders/{id}', 'MyOrderController@show');
 
@@ -113,6 +110,7 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
                 Route::apiResource('subcities', 'SubcityController');
             });
             Route::apiResource('coupons', 'CouponController')->middleware('admin.can:coupon');
+            Route::apiResource('payment-methods', 'PaymentMethodController')->middleware('admin.can:orders');
 
             Route::middleware('admin.can:blogs')->group(function () {
                 Route::apiResource('blog/categories', 'PostCategoryController');
@@ -134,6 +132,8 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
                 Route::get('orders', 'OrderController@index');
                 Route::get('orders/{id}', 'OrderController@show');
                 Route::delete('orders/{id}', 'OrderController@destroy');
+                Route::post('orders/{id}/verify', 'OrderController@verify');
+                Route::post('orders/{id}/reject', 'OrderController@reject');
                 Route::get('visits', 'VisitController@index');
                 Route::patch('visits/{id}', 'VisitController@update');
                 Route::delete('visits/{id}', 'VisitController@destroy');

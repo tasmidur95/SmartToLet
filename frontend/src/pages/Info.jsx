@@ -43,7 +43,7 @@ export function About() {
         <ul className="ticks">
           <li><Icon.Check /> Every listing is checked by our team before it goes live</li>
           <li><Icon.Check /> Save properties and compare them any time</li>
-          <li><Icon.Check /> Secure online payment through SSLCommerz</li>
+          <li><Icon.Check /> Pay by card, bank account or mobile banking, confirmed by reference</li>
           <li><Icon.Check /> Available in English and Bangla</li>
         </ul>
 
@@ -61,7 +61,7 @@ const FAQS = [
   ['Do I need an account to browse?', 'No. Browsing and searching are free without an account. You need one to save properties or post your own.'],
   ['How do I list my property?', 'Create an account, open “Post a property”, fill in the details and add photos. Our team reviews it before it is published.'],
   ['Why is my property still “Pending review”?', 'New listings are checked by our team first. Once approved it appears on the site and its status changes to “Published”.'],
-  ['What does the listing fee cover?', 'It is paid online through SSLCommerz from the “My properties” page. You can apply a coupon code at checkout.'],
+  ['What does the listing fee cover?', 'Send the fee to one of our card, bank or mobile banking accounts, then submit the transaction reference from the “My properties” page. Once we verify it, your listing can be published. You can apply a coupon code when you submit.'],
   ['My payment failed but money was deducted. What now?', 'The payment gateway confirms the transaction with us automatically. If your status is not updated within a day, contact us with your transaction reference.'],
   ['How do I contact the owner?', 'On the property page, send an “I’m interested” request and our team will connect you.'],
 ];

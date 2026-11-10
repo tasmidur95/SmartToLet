@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    const PENDING = 'Pending';
+    /** Awaiting the admin to check the reference the payer submitted. */
+    const VERIFYING = 'Verifying';
     const COMPLETE = 'Complete';
+    /** Rejected by admin (wrong / unknown reference). */
     const FAILED = 'Failed';
     const CANCELED = 'Canceled';
+    const PENDING = 'Pending';
+
+    const PURPOSES = ['listing'];
 
     /** Statuses that count as paid (includes values written by the old Blade flow). */
     const PAID = ['Complete', 'Done', 'Processing'];
@@ -18,9 +23,10 @@ class Order extends Model
     protected $fillable = [
         'user_id', 'property_id', 'amount', 'status', 'transaction_id', 'currency',
         'coupon_code', 'discount_amount', 'paid_at',
+        'purpose', 'method_id', 'method_name', 'reference', 'sender_number', 'note', 'reject_reason', 'verified_at',
     ];
 
-    protected $dates = ['paid_at'];
+    protected $dates = ['paid_at', 'verified_at'];
 
     public function user()
     {
@@ -44,5 +50,11 @@ class Order extends Model
     public function getIsPaidAttribute()
     {
         return in_array($this->status, self::PAID, true);
+    }
+
+    /** Has this property got a verified payment for the given purpose? */
+    public static function paidFor($propertyId, string $purpose): bool
+    {
+        return static::where('property_id', $propertyId)->where('purpose', $purpose)->whereIn('status', self::PAID)->exists();
     }
 }

@@ -1,21 +1,7 @@
 <?php
 
 
-        //------------SSLCOMMERZ Start---------------
-Route::post('/checkout', 'SslCommerzPaymentController@checkout');
 
-//Route::get('/example2', 'SslCommerzPaymentController@exampleHostedCheckout');
-//Route::post('/pay', 'SslCommerzPaymentController@index');  //host default
-
-//Route::get('/example1', 'SslCommerzPaymentController@exampleEasyCheckout'); //pop-up
-//Route::post('/pay-via-ajax', 'SslCommerzPaymentController@payViaAjax');
-
-Route::post('/success', 'SslCommerzPaymentController@success');
-Route::post('/fail', 'SslCommerzPaymentController@fail');
-Route::post('/cancel', 'SslCommerzPaymentController@cancel');
-
-Route::post('/ipn', 'SslCommerzPaymentController@ipn');
-        //------------SSLCOMMERZ END-------------
 
         //---------Socialite----------
 Route::get('/auth/redirect/{provider}', 'SocialController@redirect');

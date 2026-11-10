@@ -29,7 +29,7 @@ Email defaults to `admin@example.com`. Set your own with `ADMIN_EMAIL=... ADMIN_
 
 ## Optional settings (shell variables or `.env`)
 `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `SEED_DEMO=false` (skip sample cities), `DB_PASSWORD`,
-`STORE_ID` / `STORE_PASSWORD` (SSLCommerz sandbox),
+`PAYMENT_DEFAULT_AMOUNT` (listing fee in BDT),
 `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`.
 
 ## Everyday commands

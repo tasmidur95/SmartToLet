@@ -14,7 +14,7 @@ import Orders from './pages/Orders.jsx';
 import Reports from './pages/Reports.jsx';
 import Settings from './pages/Settings.jsx';
 import Backups from './pages/Backups.jsx';
-import { Admins, Blog, Coupons, Places } from './pages/CrudPages.jsx';
+import { Admins, Blog, Coupons, PaymentMethods, Places } from './pages/CrudPages.jsx';
 import './admin.css';
 
 // [path, label, icon, permission, badge key]
@@ -23,6 +23,7 @@ const NAV = [
   ['/admin/properties', 'Properties', 'Building', 'all_properties', 'pending_properties'],
   ['/admin/visits', 'Visit bookings', 'Calendar', 'orders', 'pending_visits'],
   ['/admin/orders', 'Payments', 'Wallet', 'orders', null],
+  ['/admin/payment-methods', 'Payment methods', 'Receipt', 'orders', null],
   ['/admin/inbox', 'Inbox', 'Inbox', ['orders', 'contact_messages', 'newsletter'], 'inbox'],
   ['/admin/places', 'Cities & areas', 'Pin', 'places', null],
   ['/admin/coupons', 'Coupons', 'Tag', 'coupon', null],
@@ -154,6 +155,7 @@ function Shell() {
             <Route path="properties" element={guard('all_properties', <Properties />)} />
             <Route path="visits" element={guard('orders', <Visits />)} />
             <Route path="orders" element={guard('orders', <Orders />)} />
+            <Route path="payment-methods" element={guard('orders', <PaymentMethods />)} />
             <Route path="inbox" element={guard(['orders', 'contact_messages', 'newsletter'], <Inbox />)} />
             <Route path="places" element={guard('places', <Places />)} />
             <Route path="coupons" element={guard('coupon', <Coupons />)} />

@@ -115,32 +115,6 @@ export function Contact() {
   );
 }
 
-export function PaymentResult() {
-  const { result } = useParams();
-  const [params] = useSearchParams();
-  const ok = result === 'success';
-  const copy = {
-    success: ['Payment successful', 'Thank you! Your payment was received and your listing is being processed.'],
-    failed: ['Payment failed', 'We could not confirm your payment. If money was deducted, it will be verified automatically.'],
-    cancelled: ['Payment cancelled', 'You cancelled the payment. You can try again any time from My properties.'],
-  }[result] || ['Payment', ''];
-
-  return (
-    <div className="container narrow section">
-      <div className={`card result-card ${ok ? 'ok' : 'bad'}`}>
-        <div className="result-icon">{ok ? <Icon.Check width={34} height={34} /> : <Icon.Close width={34} height={34} />}</div>
-        <h1>{copy[0]}</h1>
-        <p>{copy[1]}</p>
-        {params.get('tran_id') && <p className="muted">Reference: <code>{params.get('tran_id')}</code></p>}
-        <div className="link-row center">
-          <Link to="/my/orders" className="btn btn-primary">View my payments</Link>
-          <Link to="/my/properties" className="btn btn-outline">My properties</Link>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function NotFound() {
   return (
     <div className="container narrow section">

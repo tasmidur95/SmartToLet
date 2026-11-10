@@ -19,7 +19,7 @@ import { About, Faq, Privacy, Terms } from './pages/Info.jsx';
 import { CategoryPage, CityPage } from './pages/Discover.jsx';
 import Compare from './pages/Compare.jsx';
 import ListYourProperty from './pages/ListYourProperty.jsx';
-import { Blog, BlogPost, Contact, NotFound, PaymentResult } from './pages/Misc.jsx';
+import { Blog, BlogPost, Contact, NotFound } from './pages/Misc.jsx';
 
 // The admin panel is a separate chunk so visitors never download it.
 const AdminApp = lazy(() => import('./admin/AdminApp.jsx'));
@@ -65,7 +65,6 @@ export default function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/payment/:result" element={<PaymentResult />} />
 
           <Route path="/wishlist" element={guard(<Wishlist />)} />
           <Route path="/my/properties" element={guard(<MyProperties />)} />

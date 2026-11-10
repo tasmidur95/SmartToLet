@@ -7,6 +7,7 @@ import { ErrorBox, Field, Loader, Modal } from '../../components/Ui.jsx';
 import { money, PLACEHOLDER, STATUS, dateText } from '../../utils/format.js';
 import { PageHead, SearchBox, Tabs, Toolbar } from '../components/AdminUi.jsx';
 import DataTable, { usePaging } from '../components/DataTable.jsx';
+import EditModal from './EditPropertyModal.jsx';
 
 const TABS = [['', 'All'], ['0', 'Pending'], ['1', 'Published'], ['2', 'In progress'], ['3', 'Delivered'], ['4', 'Cancelled']];
 
@@ -19,69 +20,6 @@ const ACTIONS = {
   delivered: ['Mark delivered', 'btn-primary'],
 };
 const NEXT = { 0: ['approve', 'cancel'], 1: ['delivery-progress', 'delivered', 'pending', 'cancel'], 2: ['delivered', 'pending', 'cancel'], 3: ['pending'], 4: ['pending'] };
-
-function EditModal({ property, onClose, onSaved }) {
-  const toast = useToast();
-  const [f, setF] = useState({
-    price: property.price ?? '', discount_price: property.discount_price ?? '', total_price: property.total_price ?? '', service_charge: property.service_charge ?? '',
-    map_link: property.map_link || '', latitude: property.latitude ?? '', longitude: property.longitude ?? '', details: property.details || '',
-    trend: property.badges.trend, best_rated: property.badges.best_rated, hot_new: property.badges.hot_new,
-  });
-  const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState(null);
-  const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
-
-  const submit = async (e) => {
-    e.preventDefault();
-    setBusy(true);
-    setErr(null);
-    const body = new FormData();
-    body.append('_method', 'PUT');
-    Object.entries(f).forEach(([k, v]) => {
-      if (typeof v === 'boolean') body.append(k, v ? 1 : 0);
-      else if (v !== '') body.append(k, v);
-    });
-    try {
-      await adm.post(`/admin/properties/${property.id}`, body);
-      toast.success('Property updated');
-      onSaved();
-    } catch (error) {
-      setErr(error);
-      setBusy(false);
-    }
-  };
-
-  return (
-    <Modal title={`Edit ${property.code}`} onClose={onClose}>
-      <form onSubmit={submit} className="a-form">
-        {err && !err.errors && <div className="alert alert-error">{err.message}</div>}
-        <div className="row-2">
-          <Field label="Price (৳)" error={err?.field('price')}><input type="number" min="0" value={f.price} onChange={set('price')} /></Field>
-          <Field label="Discount price (৳)" error={err?.field('discount_price')}><input type="number" min="0" value={f.discount_price} onChange={set('discount_price')} /></Field>
-        </div>
-        <div className="row-2">
-          <Field label="Total price (৳)" error={err?.field('total_price')} hint="Used in delivered-value reports"><input type="number" min="0" value={f.total_price} onChange={set('total_price')} /></Field>
-          <Field label="Service charge (৳)" error={err?.field('service_charge')} hint="Listing fee. Empty = default fee"><input type="number" min="0" value={f.service_charge} onChange={set('service_charge')} /></Field>
-        </div>
-        <Field label="Google Maps link" error={err?.field('map_link')}><input value={f.map_link} onChange={set('map_link')} /></Field>
-        <div className="row-2">
-          <Field label="Latitude" error={err?.field('latitude')}><input type="number" step="any" value={f.latitude} onChange={set('latitude')} /></Field>
-          <Field label="Longitude" error={err?.field('longitude')}><input type="number" step="any" value={f.longitude} onChange={set('longitude')} /></Field>
-        </div>
-        <Field label="Details" error={err?.field('details')}><textarea rows="4" value={f.details} onChange={set('details')} /></Field>
-        <div className="check-group">
-          {[['hot_new', 'Hot / new'], ['trend', 'Trending'], ['best_rated', 'Best rated']].map(([k, label]) => (
-            <label key={k} className="check-row"><input type="checkbox" checked={!!f[k]} onChange={(e) => setF({ ...f, [k]: e.target.checked })} /><span>{label}</span></label>
-          ))}
-        </div>
-        <div className="a-form-actions">
-          <button type="button" className="btn btn-ghost" onClick={onClose}>Cancel</button>
-          <button className="btn btn-primary" disabled={busy}>{busy ? 'Saving…' : 'Save changes'}</button>
-        </div>
-      </form>
-    </Modal>
-  );
-}
 
 function DetailModal({ id, onClose, onChanged }) {
   const toast = useToast();
@@ -125,7 +63,7 @@ function DetailModal({ id, onClose, onChanged }) {
           </dl>
           <p className="prose">{p.details}</p>
           <div className="a-actions">
-            <button className="btn btn-outline" onClick={() => setEditing(true)}>Edit details & badges</button>
+            <button className="btn btn-outline" onClick={() => setEditing(true)}>Edit property, photos & badges</button>
             {NEXT[p.status].map((a) => (
               <button key={a} className={`btn ${ACTIONS[a][1]}`} disabled={!!busy} onClick={() => act(a)}>{busy === a ? '…' : ACTIONS[a][0]}</button>
             ))}
@@ -185,7 +123,7 @@ export default function Properties() {
   // actions depend on where the listing is in its life cycle
   const actions = (p) => [
     { label: p.status === 0 ? 'Review listing' : 'View details', icon: 'Eye', onClick: () => setOpenId(p.id) },
-    { label: 'Edit price & badges', icon: 'Edit', onClick: () => setEditing(p) },
+    { label: 'Edit property & photos', icon: 'Edit', onClick: () => setEditing(p) },
     { label: 'Open on website', icon: 'External', hidden: ![1, 2].includes(p.status), onClick: () => window.open(`/properties/${p.id}`, '_blank') },
     { divider: true },
     ...NEXT[p.status].filter((a) => a !== 'cancel').map((a) => ({ label: ACTION_LABEL[a], icon: ACTION_ICON[a], onClick: () => move(p, a) })),

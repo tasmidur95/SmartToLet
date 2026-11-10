@@ -34,7 +34,6 @@ export const myApi = {
   orders: (query) => api.get('/my/orders', query),
   visits: (query) => api.get('/my/visits', query),
   cancelVisit: (id) => api.post(`/my/visits/${id}/cancel`),
-  checkout: (b) => api.post('/payments/checkout', b),
   wishlist: (query) => api.get('/wishlist', query),
   wishAdd: (id) => api.post(`/wishlist/${id}`),
   wishRemove: (id) => api.del(`/wishlist/${id}`),
@@ -52,4 +51,11 @@ export const contentApi = {
 export const passwordApi = {
   forgot: (email) => api.post('/auth/forgot-password', { email }),
   reset: (body) => api.post('/auth/reset-password', body),
+};
+
+// Manual payments: pick an account, send money outside the site, submit the transaction reference.
+export const payApi = {
+  methods: () => api.get('/payment-methods'),
+  quote: (query) => api.get('/payments/quote', query),
+  pay: (b) => api.post('/payments', b),
 };
